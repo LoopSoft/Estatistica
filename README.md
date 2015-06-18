@@ -6,6 +6,7 @@ Trabalho do curso de Eng. de Computação, desenvolver um programa para ser usad
 Integrantes do Grupo:
   Hiran Gondim,
   Igor Felipe,
+  Mayko Douglas,
   Anna Barata,
   Fernanda Araujo,
   Alexandre Silva,
