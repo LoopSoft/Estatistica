@@ -1,0 +1,233 @@
+using UnityEngine;
+using System.Collections;
+
+public class Graphic : MonoBehaviour {
+	public Material graphicMat, gridMat;
+	public float gridExpessure = 0.2f, gridMarksOffset = 1.3f, gridMarksLength = 1.5f, minZoom = 0.01f, maxZoom = 5;
+	public Color GridColor = new Color(0,0,0,1), graphicFuncColor = new Color(0,0,1,1), graphicPointsColor = new Color(1,0,0,1);
+	public float[] x = new float[3],y = new float[3];
+
+	private float deslocX, deslocY, zoom = 0.1f;
+	private float _deslocX, _deslocY;
+
+	void Start(){
+		deslocX = -0.5f;
+		deslocY = -0.5f;
+
+		//TESTE ZONE-------------------------------------
+		x = new float[200];
+		y = new float[200];
+		for(int i = 0; i < 200; i++){
+			x[i] = _x;
+			y[i] = Mathf.Cos(Mathf.Pow (_x,2) );
+			_x+=0.1f;
+		}
+		//-------------------------------------------------
+	}
+	float _x = 0;
+
+	public void resetAll(){
+		resetZoom ();
+		resetDesloc ();
+
+	}
+	public void resetZoom () {
+		zoom = 0.1f;
+	}
+	public void resetDesloc () {
+		deslocX = 0;
+		deslocY = 0;
+	}
+
+	void Update() {
+		zoom += Input.GetAxis ("Mouse ScrollWheel") / 10;
+		zoom = Mathf.Clamp (zoom, minZoom, maxZoom);
+
+		if (Input.GetMouseButton (0)) {
+			deslocX += Input.GetAxis ("Mouse X") / 10;
+			deslocY += Input.GetAxis ("Mouse Y") / 10;
+		}
+		if (Input.GetMouseButtonUp (1)) {
+			resetDesloc ();
+		}
+
+		//if(deslocX > -0.5f && deslocX < 0.5f)
+		_deslocX = deslocX;
+		//if(deslocY > -0.5f && deslocY < 0.5f)
+		_deslocY = deslocY;
+
+	}
+
+	void OnPostRender() {
+		drawGrid ();
+		drawGraphicFunc (x, y);
+	}
+
+	public void drawGraphicFunc (float[] x, float[]y){
+		if (!graphicMat) {
+			Debug.LogError("Please Assign a material on the inspector");
+			return;
+		}
+		if (x.Length > 1 && y.Length > 1) {
+			GL.PushMatrix ();
+			graphicMat.SetPass (0);
+			GL.LoadOrtho ();
+			GL.Begin (GL.LINES);
+			GL.Color(graphicFuncColor);
+			for (int i = 0; i < x.Length-1; i++) {
+				GL.Vertex3 (0.5f+ (x [i]*zoom) + deslocX, 0.5f+ (y [i]*zoom) + deslocY, 0);
+				GL.Vertex3 (0.5f+ (x [i+1]*zoom) + deslocX, 0.5f+ (y [i+1]*zoom) + deslocY, 0);
+			}
+			GL.End ();
+			GL.PopMatrix ();
+		}
+	}
+	public void drawGraphicPoints (float[] x){
+		if (!graphicMat) {
+			Debug.LogError("Please Assign a material on the inspector");
+			return;
+		}
+		GL.PushMatrix();
+		graphicMat.SetPass(0);
+		GL.LoadOrtho();
+		GL.Begin (GL.QUADS);
+		GL.Color(graphicPointsColor);
+		GL.End ();
+		GL.PopMatrix();
+	}
+
+	void drawGrid () {
+		if (!gridMat) {
+			Debug.LogError("Please Assign a material on the inspector");
+			return;
+		}
+		GL.PushMatrix();
+		gridMat.SetPass(0);
+		GL.LoadOrtho();
+		drawGridXLine (gridExpessure/100f);
+		if(Screen.width < Screen.height)
+			drawGridYLine (gridExpessure/100f);
+		else
+			drawGridYLine ((gridExpessure/2)/100f);
+		GL.PopMatrix();
+	}
+
+
+	void drawGridXLine (float Ex) {
+		_deslocY = Mathf.Clamp (_deslocY, -0.5f, 0.5f);
+
+		GL.Begin(GL.QUADS);
+		GL.Color(GridColor);
+		GL.Vertex3(0, 0.5f+Ex + _deslocY, 0);
+		GL.Vertex3(1, 0.5f+Ex + _deslocY, 0);
+		GL.Vertex3(1, 0.5f-Ex + _deslocY, 0);
+		GL.Vertex3(0, 0.5f-Ex + _deslocY, 0);
+		GL.End();
+
+		drawGridXLineMarks (gridMarksOffset/10, gridMarksLength/100);
+	}
+	void drawGridXLineMarks (float Offset, float length) {
+		if (Offset > 0.08f) {
+			if (deslocX > 0) {
+				for (float i = 0; i < 1+deslocX; i += Offset) {
+					GL.Begin (GL.LINES);
+					GL.Color (GridColor);
+					GL.Vertex3 (0.5f + i + deslocX, 0.5f + length + _deslocY, 0);
+					GL.Vertex3 (0.5f + i + deslocX, 0.5f - length + _deslocY, 0);
+					GL.Vertex3 (0.5f - i + deslocX, 0.5f + length + _deslocY, 0);
+					GL.Vertex3 (0.5f - i + deslocX, 0.5f - length + _deslocY, 0);
+					GL.End ();
+				}
+
+				for (float i = Offset/4; i < 1+deslocX; i += Offset/4) {
+					GL.Begin (GL.LINES);
+					GL.Color (GridColor);
+					GL.Vertex3 (0.5f + i + deslocX, 0.5f + (length/2) + _deslocY, 0);
+					GL.Vertex3 (0.5f + i + deslocX, 0.5f - (length/2) + _deslocY, 0);
+					GL.Vertex3 (0.5f - i + deslocX, 0.5f + (length/2) + _deslocY, 0);
+					GL.Vertex3 (0.5f - i + deslocX, 0.5f - (length/2) + _deslocY, 0);
+					GL.End ();
+				}
+			} else {
+				for (float i = 0; i > -1+deslocX; i -= Offset) {
+					GL.Begin (GL.LINES);
+					GL.Color (GridColor);
+					GL.Vertex3 (0.5f + i + deslocX, 0.5f + length + _deslocY, 0);
+					GL.Vertex3 (0.5f + i + deslocX, 0.5f - length + _deslocY, 0);
+					GL.Vertex3 (0.5f - i + deslocX, 0.5f + length + _deslocY, 0);
+					GL.Vertex3 (0.5f - i + deslocX, 0.5f - length + _deslocY, 0);
+					GL.End ();
+				}
+			
+				for (float i = Offset/4; i > -1+deslocX; i -= Offset/4) {
+					GL.Begin (GL.LINES);
+					GL.Color (GridColor);
+					GL.Vertex3 (0.5f + i + deslocX, 0.5f + (length/2) + _deslocY, 0);
+					GL.Vertex3 (0.5f + i + deslocX, 0.5f - (length/2) + _deslocY, 0);
+					GL.Vertex3 (0.5f - i + deslocX, 0.5f + (length/2) + _deslocY, 0);
+					GL.Vertex3 (0.5f - i + deslocX, 0.5f - (length/2) + _deslocY, 0);
+					GL.End ();
+				}
+			}
+		}
+	}
+
+	void drawGridYLine (float Ex) {
+		_deslocX = Mathf.Clamp (_deslocX, -0.5f, 0.5f);
+
+		GL.Begin(GL.QUADS);
+		GL.Color(GridColor);
+		GL.Vertex3(0.5f+Ex+_deslocX, 0, 0);
+		GL.Vertex3(0.5f+Ex+_deslocX, 1, 0);
+		GL.Vertex3(0.5f-Ex+_deslocX, 1, 0);
+		GL.Vertex3(0.5f-Ex+_deslocX, 0, 0);
+		GL.End();
+
+		drawGridYLineMarks (gridMarksOffset/10, (gridMarksLength/1.5f)/100);
+	}
+	void drawGridYLineMarks (float Offset, float length) {
+		if (Offset > 0.08f) {
+			if(deslocY > 0){
+				for (float i = 0; i < 1 + deslocY; i += Offset) {
+					GL.Begin (GL.LINES);
+					GL.Color (GridColor);
+					GL.Vertex3 (0.5f + length+_deslocX, 0.5f + i + deslocY, 0);
+					GL.Vertex3 (0.5f - length+_deslocX, 0.5f + i + deslocY, 0);
+					GL.Vertex3 (0.5f + length+_deslocX, 0.5f - i + deslocY, 0);
+					GL.Vertex3 (0.5f - length+_deslocX, 0.5f - i + deslocY, 0);
+					GL.End ();
+				}
+				
+				for (float i = Offset/4; i < 1 + deslocY; i += Offset/4) {
+					GL.Begin (GL.LINES);
+					GL.Color (GridColor);
+					GL.Vertex3 (0.5f + (length/2)+_deslocX, 0.5f + i + deslocY, 0);
+					GL.Vertex3 (0.5f - (length/2)+_deslocX, 0.5f + i + deslocY, 0);
+					GL.Vertex3 (0.5f + (length/2)+_deslocX, 0.5f - i + deslocY, 0);
+					GL.Vertex3 (0.5f - (length/2)+_deslocX, 0.5f - i + deslocY, 0);
+					GL.End ();
+				}
+			}else{
+				for (float i = 0; i > -1 + deslocY; i -= Offset) {
+					GL.Begin (GL.LINES);
+					GL.Color (GridColor);
+					GL.Vertex3 (0.5f + length+_deslocX, 0.5f + i + deslocY, 0);
+					GL.Vertex3 (0.5f - length+_deslocX, 0.5f + i + deslocY, 0);
+					GL.Vertex3 (0.5f + length+_deslocX, 0.5f - i + deslocY, 0);
+					GL.Vertex3 (0.5f - length+_deslocX, 0.5f - i + deslocY, 0);
+					GL.End ();
+				}
+				
+				for (float i = Offset/4; i > -1 + deslocY; i -= Offset/4) {
+					GL.Begin (GL.LINES);
+					GL.Color (GridColor);
+					GL.Vertex3 (0.5f + (length/2)+_deslocX, 0.5f + i + deslocY, 0);
+					GL.Vertex3 (0.5f - (length/2)+_deslocX, 0.5f + i + deslocY, 0);
+					GL.Vertex3 (0.5f + (length/2)+_deslocX, 0.5f - i + deslocY, 0);
+					GL.Vertex3 (0.5f - (length/2)+_deslocX, 0.5f - i + deslocY, 0);
+					GL.End ();
+				}
+			}
+		}
+	}
+}
