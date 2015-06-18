@@ -1,7 +1,7 @@
 # Estatistica
 ============================
 
-Trabalho proposto por um professor do nosso curso, desenvolver um programa para ser usado durante as aulas da sua materia.
+Trabalho do curso de Eng. de Computação, desenvolver um programa para ser usado durante as aulas da materia de Estatistica.
 
 Integrantes do Grupo:
   Hiran Gondim,
