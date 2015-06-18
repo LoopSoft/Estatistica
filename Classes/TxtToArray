@@ -1,0 +1,50 @@
+using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine.UI;
+public class TxtToArray : MonoBehaviour {
+
+	public char identifier = ',';
+	string InX, InY;
+	public InputField inX, inY;
+	public List<float> x,y;
+
+	void Separate (List<float> n, string InN){
+		int i = 0;
+		int j = 0;
+		string Elementos = "";
+		//InN != "" && 
+		if (InN.Contains (identifier.ToString())) {
+			n.Add(0);
+			do {
+				if(i+1 < InN.Length && InN[i+1] == identifier){
+					n.Add(0);
+					Elementos += InN [i];
+					n[j] = float.Parse( Elementos);
+					Elementos = "";
+					i+=2;
+					j++;
+				} else {
+					Elementos += InN [i];
+					i++;
+				}
+				
+				if(i+1 > InN.Length){
+					n[j] = float.Parse( Elementos);
+					break;
+				}
+			}while ( i <= InX.Length);
+		} else {
+			print ("Insira mais elementos no conjunto");
+		}
+	}
+	public void Separar(){
+		Separate(x, InX);
+		Separate(y, InY);
+	}
+	void Start () {
+	}
+	void Update () {
+		InX = inX.text;
+		InY = inY.text;
+	}
+}
