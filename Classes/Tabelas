@@ -5,14 +5,19 @@ public class Tabela : MonoBehaviour {
 	
 	public int n,Posicao_Xo;
 	public float Xo,h;
-	public Elementos FiSimples, fri, FiAcumulado, Fri, xi, yi; //Primeira unidade
-	public Elementos Yi_Ajustado, XiYi, Xi2, Yi2; //Segunda unidade
+	Elementos Yi_Ajustado1 = new Elementos(), XiYi1 = new Elementos(), Xi21 = new Elementos(), Yi21 = new Elementos(); //Segunda unidade
+	Elementos FiSimples1 = new Elementos(), fri1 = new Elementos(), FiAcumulado1 = new Elementos(), Fri1 = new Elementos(), xi1 = new Elementos(), yi1 = new Elementos();
 
-	void Start (){
-	}
-	void Update (){
-	}
-	
+	public Elementos FiSimples(){return FiSimples1;}
+	public Elementos fri(){return fri1;}
+	public Elementos FiAcumulado(){return FiAcumulado1;}
+	public Elementos Fri(){return Fri1;}
+	public Elementos xi(){return xi1;}
+	public Elementos yi(){return yi1;}
+	public Elementos Yi_Ajustado(){return Yi_Ajustado1;}
+	public Elementos XiYi(){return XiYi1;}
+	public Elementos Xi2(){return Xi21;}
+	public Elementos Yi2(){return Yi21;}
 	/// Assunto da primeira unidade.
 	public int set_NumClasse (Elementos Elementos){
 		return n = (int)Mathf.Sqrt(Elementos.ElementosN.Length); 
@@ -42,74 +47,72 @@ public class Tabela : MonoBehaviour {
 		set_Xo();
 	}
 	void set_fi (int i, int Valor){
-		FiSimples.ElementosN = new float[n];
-		FiSimples.ElementosN[i] = Valor;
-		set_fri(i);
+		FiSimples1.ElementosN = new float[n];
+		FiSimples1.ElementosN[i] = Valor;
+		set_fri1(i);
 		set_Fi(i, Valor);
 	}
-	void set_fri (int i) {
-		fri.ElementosN = new float[n];
-		fri.ElementosN[i] = (FiSimples.ElementosN[i] / FiSimples.ElementosN[FiSimples.ElementosN.Length - 1]) * 100;
+	void set_fri1 (int i) {
+		fri1.ElementosN = new float[n];
+		fri1.ElementosN[i] = (FiSimples1.ElementosN[i] / FiSimples1.ElementosN[FiSimples1.ElementosN.Length - 1]) * 100;
 	}
 	void set_Fi (int i, int Valor){
-		FiAcumulado.ElementosN = new float[n];
-		FiAcumulado.ElementosN[i] += FiSimples.ElementosN[i];
-		set_Fri(i);
+		FiAcumulado1.ElementosN = new float[n];
+		FiAcumulado1.ElementosN[i] += FiSimples1.ElementosN[i];
+		set_Fri1(i);
 	}
-	void set_Fri (int i){
-		Fri.ElementosN = new float[n];
-		Fri.ElementosN[i] = (Fri.ElementosN[i] / Fri.ElementosN[Fri.ElementosN.Length - 1]) * 100;
+	void set_Fri1 (int i){
+		Fri1.ElementosN = new float[n];
+		Fri1.ElementosN[i] = (FiAcumulado1.ElementosN[i] / FiAcumulado1.ElementosN[FiAcumulado1.ElementosN.Length - 1]) * 100;
 	}
 	void set_Xi(int posicao, float LimSup, float LimInf){
-		xi.ElementosN = new float[n];
-		xi.ElementosN[posicao] = (LimSup + LimInf) / 2;
+		xi1.ElementosN = new float[n];
+		xi1.ElementosN[posicao] = (LimSup + LimInf) / 2;
 	}
 	void set_Xo(){
-		Xo = 0;
+		Xo = xi1.ElementosN[0];
+		Posicao_Xo = 0;
 		for(int i = 1; i < n; ++i){
-			if(FiSimples.ElementosN[i] > FiSimples.ElementosN[i-1]){
-				Xo = xi.ElementosN[i];
+			if(FiSimples().ElementosN[i] > FiSimples().ElementosN[Posicao_Xo]){
+				Xo = xi1.ElementosN[i];
 				Posicao_Xo = i;
 			}
-			else{ 
-				Xo = xi.ElementosN[i-1];
-				Posicao_Xo = i-1;
-			}
 		}
+		print(Posicao_Xo);
 		set_Yi();
 	}
 	void set_Yi(){
-		yi.ElementosN = new float[n];
+		yi1.ElementosN = new float[n];
 		for(int i = 0; i < n; ++i){
-			yi.ElementosN[i] = (xi.ElementosN[i] - Xo) / h;
+			yi1.ElementosN[i] = (xi1.ElementosN[i] - Xo) / h;
 		}
 	}
 	///############################
 	/// Assunto da segunda unidade.
 	public void set_XiYi(Elementos X, Elementos Y){
-		XiYi.ElementosN = new float[n];
+		XiYi1.ElementosN = new float[n];
 		for(int i = 0; i < X.ElementosN.Length; ++i){
-			XiYi.ElementosN[i] = X.ElementosN[i] * Y.ElementosN[i];
-			print(XiYi.ElementosN[i]);
+			XiYi1.ElementosN[i] = X.ElementosN[i] * Y.ElementosN[i];
+			print(XiYi1.ElementosN[i]);
 		}
 	}
 	public void set_Xi2(Elementos X){
-		Xi2.ElementosN = new float[n];
+		Xi21.ElementosN = new float[n];
 		for(int i = 0; i < X.ElementosN.Length; ++i){
-			Xi2.ElementosN[i] = Mathf.Pow(X.ElementosN[i],2);
+			Xi21.ElementosN[i] = Mathf.Pow(X.ElementosN[i],2);
 		}
 	}
 	public void set_Yi2(Elementos Y){
-		Yi2.ElementosN = new float[n];
+		Yi21.ElementosN = new float[n];
 		for(int i = 0; i < Y.ElementosN.Length; ++i){
-			Yi2.ElementosN[i] = Mathf.Pow(Y.ElementosN[i],2);
+			Yi21.ElementosN[i] = Mathf.Pow(Y.ElementosN[i],2);
 		}
 	}
 	public void set_YiAjustado(Elementos Y){
-		Yi_Ajustado.ElementosN = new float[n];
+		Yi_Ajustado1.ElementosN = new float[n];
 		//Caso o sistema nao seja linear
 		for(int i = 0; i < Y.ElementosN.Length; ++i){
-			Yi_Ajustado.ElementosN[i] = Mathf.Log(Y.ElementosN[i]);
+			Yi_Ajustado1.ElementosN[i] = Mathf.Log(Y.ElementosN[i]);
 		}
 	}
 	///############################
