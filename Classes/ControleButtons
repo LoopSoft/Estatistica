@@ -34,10 +34,10 @@ public class ControleButtons : MonoBehaviour {
 			hX.text = Xa.set_AmplitudeClasse(Xc).ToString();
 			Xa.set_Classes(Xc);
 			//--------------------\\
-			MediaX.text = Xb.set_Media().ToString();
-			MedianaX.text = Xb.set_Mediana(Xc).ToString();
-			ModaX.text = Xb.set_Moda(Xc).ToString();
-			DesPadraoX.text = Xb.set_DesPadrao().ToString();
+			MediaX.text = Xb.set_Media(Xa).ToString();
+			MedianaX.text = Xb.set_Mediana(Xc,Xa).ToString();
+			ModaX.text = Xb.set_Moda(Xc,Xa).ToString();
+			DesPadraoX.text = Xb.set_DesPadrao(Xa).ToString();
 			coefVariacaoX.text = Xb.set_CoefVariacao().ToString();
 			//--------------------\\
 		}
@@ -54,24 +54,19 @@ public class ControleButtons : MonoBehaviour {
 			hY.text = Ya.set_AmplitudeClasse(Yc).ToString();
 			Ya.set_Classes(Yc);
 			//--------------------\\
-			MediaX.text = Xb.set_Media().ToString();
-			MedianaX.text = Xb.set_Mediana(Xc).ToString();
-			ModaX.text = Xb.set_Moda(Xc).ToString();
-			DesPadraoX.text = Xb.set_DesPadrao().ToString();
+			MediaX.text = Xb.set_Media(Xa).ToString();
+			MedianaX.text = Xb.set_Mediana(Xc,Xa).ToString();
+			ModaX.text = Xb.set_Moda(Xc,Xa).ToString();
+			DesPadraoX.text = Xb.set_DesPadrao(Xa).ToString();
 			coefVariacaoX.text = Xb.set_CoefVariacao().ToString();
 			//--------------------\\
-			MediaY.text = Yb.set_Media().ToString();
-			MedianaY.text = Yb.set_Mediana(Yc).ToString();
-			ModaY.text = Yb.set_Moda(Yc).ToString();
-			DesPadraoY.text = Yb.set_DesPadrao().ToString();
+			MediaY.text = Yb.set_Media(Ya).ToString();
+			MedianaY.text = Yb.set_Mediana(Yc,Ya).ToString();
+			ModaY.text = Yb.set_Moda(Yc,Ya).ToString();
+			DesPadraoY.text = Yb.set_DesPadrao(Ya).ToString();
 			coefVariacaoY.text = Yb.set_CoefVariacao().ToString();
 			//--------------------\\
-			//---Segunda Unidade----\\
-			Xa.set_XiYi(Xc,Yc);
-			Xa.set_Xi2(Xc);
-			Ya.set_Yi2(Yc);
-			//--------------------\\
-			coefPerson.text = Xb.Coeficiente_Person_Linear(Xc,Yc).ToString();
+			coefPerson.text = Xb.Coeficiente_Person_Linear(Xc,Yc,Xa).ToString();
 //			Xb.Sist_Linear(Xc,Yc);
 			//--------------------\\
 		}
@@ -88,23 +83,23 @@ public class ControleButtons : MonoBehaviour {
 			hY.text = Ya.set_AmplitudeClasse(Yc).ToString();
 			Ya.set_Classes(Yc);
 			//--------------------\\
-			MediaX.text = Xb.set_Media().ToString();
-			MedianaX.text = Xb.set_Mediana(Xc).ToString();
-			ModaX.text = Xb.set_Moda(Xc).ToString();
-			DesPadraoX.text = Xb.set_DesPadrao().ToString();
+			MediaX.text = Xb.set_Media(Xa).ToString();
+			MedianaX.text = Xb.set_Mediana(Xc,Xa).ToString();
+			ModaX.text = Xb.set_Moda(Xc,Xa).ToString();
+			DesPadraoX.text = Xb.set_DesPadrao(Xa).ToString();
 			coefVariacaoX.text = Xb.set_CoefVariacao().ToString();
 			//--------------------\\
-			MediaY.text = Yb.set_Media().ToString();
-			MedianaY.text = Yb.set_Mediana(Yc).ToString();
-			ModaY.text = Yb.set_Moda(Yc).ToString();
-			DesPadraoY.text = Yb.set_DesPadrao().ToString();
+			MediaY.text = Yb.set_Media(Ya).ToString();
+			MedianaY.text = Yb.set_Mediana(Yc,Ya).ToString();
+			ModaY.text = Yb.set_Moda(Yc,Ya).ToString();
+			DesPadraoY.text = Yb.set_DesPadrao(Ya).ToString();
 			coefVariacaoY.text = Yb.set_CoefVariacao().ToString();
 			//---Segunda Unidade----\\
 			Xa.set_XiYi(Xc,Yc);
 			Xa.set_Xi2(Xc);
 			Ya.set_Yi2(Yc);
 			//--------------------\\
-			coefPerson.text = Yb.Coeficiente_Person_nLinear(Xc,Yc).ToString();
+			coefPerson.text = Yb.Coeficiente_Person_nLinear(Xc,Yc,Xa).ToString();
 //			Yb.Sist_nLinear(Xc,Yc);
 			//--------------------\\
 		}
