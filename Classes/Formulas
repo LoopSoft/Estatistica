@@ -4,7 +4,6 @@ using System.Collections;
 public class Formulas : MonoBehaviour {
 
 
-	public Tabela t = null;
 	public float som_fiYi,som_fi,som_fiYi2; //Primeira unidade
 	public float som_XiYi,som_Xi,som_Yi,som_Xi2,som_Yi2; //Segunda unidade
 	public float DesPadrao, Media, Moda, Mediana;
@@ -16,52 +15,49 @@ public class Formulas : MonoBehaviour {
 	}
 	/// Primeira unidade
 	//----somatorios------------------------
-	void set_SomfiYi(){
+	void set_SomfiYi(Tabela t){
 		for(int i = 0; i < t.n; ++i){
-			som_fiYi += t.FiSimples.ElementosN[i] * t.yi.ElementosN[i];
+			som_fiYi += t.FiSimples().ElementosN[i] * t.yi().ElementosN[i];
 		}
 	}
-	void set_Somfi(){
+	void set_Somfi(Tabela t){
 		for(int i = 0; i < t.n; ++i){
-			som_fi += t.FiSimples.ElementosN[i];
+			som_fi += t.FiSimples().ElementosN[i];
 		}
 	}
-	void set_SomfiYi2(){
+	void set_SomfiYi2(Tabela t){
 		for(int i = 0; i < t.n; ++i){
-			som_fiYi2 += t.FiSimples.ElementosN[i] * Mathf.Pow(t.yi.ElementosN[i],2);
+			som_fiYi2 += t.FiSimples().ElementosN[i] * Mathf.Pow(t.yi().ElementosN[i],2);
 		}
 	}
 	//-------------------------------------------------------
 	//Formulas de Media, Moda, Mediana, Des. Padrao, coef. Variaçao
-	public float set_Media(){
-		set_SomfiYi();
+	public float set_Media(Tabela t){
+		set_SomfiYi(t);
 		return t.Xo +((t.h * som_fiYi) / t.n);
 	}
-	public float set_Moda(Elementos Elementos){
-		if(t.Posicao_Xo == 0){
-			Moda = (Elementos.ElementosN[Elementos.ElementosN.Length - 1] + (t.FiSimples.ElementosN[t.Posicao_Xo] / (2 * t.FiSimples.ElementosN[t.Posicao_Xo]- t.FiSimples.ElementosN[t.Posicao_Xo + 1])));
-		}
-		else if(t.Posicao_Xo == Elementos.ElementosN.Length - 1){
-			Moda = (Elementos.ElementosN[Elementos.ElementosN.Length - 1] + ((t.FiSimples.ElementosN[t.Posicao_Xo] - t.FiSimples.ElementosN[t.Posicao_Xo - 1]) / (2 * t.FiSimples.ElementosN[t.Posicao_Xo] - t.FiSimples.ElementosN[t.Posicao_Xo - 1])));
-		}
-		else if(t.Posicao_Xo > 0 && t.Posicao_Xo < Elementos.ElementosN.Length - 1){
-			Moda = (Elementos.ElementosN[Elementos.ElementosN.Length - 1] + ((t.FiSimples.ElementosN[t.Posicao_Xo] - t.FiSimples.ElementosN[t.Posicao_Xo - 1]) / (2 * t.FiSimples.ElementosN[t.Posicao_Xo] - t.FiSimples.ElementosN[t.Posicao_Xo - 1] - t.FiSimples.ElementosN[t.Posicao_Xo + 1])));
-		}
-		return Moda;
+	public float set_Moda(Elementos Elementos, Tabela t){
+		if(t.Posicao_Xo == 0)
+			return (Elementos.ElementosN[Elementos.ElementosN.Length - 1] +(t.FiSimples().ElementosN[t.Posicao_Xo]/(2 * t.FiSimples().ElementosN[t.Posicao_Xo]) - t.FiSimples().ElementosN[t.Posicao_Xo + 1]));
+
+		else if(t.Posicao_Xo == t.n - 1)
+			return (Elementos.ElementosN[Elementos.ElementosN.Length - 1] +(t.FiSimples().ElementosN[t.Posicao_Xo] - t.FiSimples().ElementosN[t.Posicao_Xo - 1] / (2 * t.FiSimples().ElementosN[t.Posicao_Xo]) - t.FiSimples().ElementosN[t.Posicao_Xo - 1]));
+
+		else
+			return (Elementos.ElementosN[Elementos.ElementosN.Length - 1] +(t.FiSimples().ElementosN[t.Posicao_Xo] - t.FiSimples().ElementosN[t.Posicao_Xo - 1] / (2 * t.FiSimples().ElementosN[t.Posicao_Xo]) - t.FiSimples().ElementosN[t.Posicao_Xo - 1] - t.FiSimples().ElementosN[t.Posicao_Xo + 1]));
 	}
-	public float set_Mediana(Elementos Elementos){
-		set_Somfi();
-		if(t.Posicao_Xo == Elementos.ElementosN.Length -1){
-			Mediana = (Elementos.ElementosN[Elementos.ElementosN.Length - 1] + ((t.h * (som_fi / 2 - 0)) / t.FiSimples.ElementosN[t.Posicao_Xo]));
+	public float set_Mediana(Elementos Elementos, Tabela t){
+		set_Somfi(t);
+		if(t.Posicao_Xo == t.n - 1){
+			return(Elementos.ElementosN[Elementos.ElementosN.Length - 1] + ((t.h * (som_fi / 2)) / t.FiSimples().ElementosN[t.Posicao_Xo]));
 		}
-		else if(t.Posicao_Xo > 0 && t.Posicao_Xo < Elementos.ElementosN.Length - 1){
-			Mediana = (Elementos.ElementosN[Elementos.ElementosN.Length - 1] + ((t.h * (som_fi / 2 - t.FiAcumulado.ElementosN[t.Posicao_Xo - 1])) / t.FiSimples.ElementosN[t.Posicao_Xo]));
+		else{
+			return(Elementos.ElementosN[Elementos.ElementosN.Length - 1] + ((t.h * (som_fi / 2 - t.FiAcumulado().ElementosN[t.Posicao_Xo - 1])) / t.FiSimples().ElementosN[t.Posicao_Xo]));
 		}
-		return Mediana;
 	}
-	public float set_DesPadrao(){
-		set_SomfiYi2();
-		set_SomfiYi();
+	public float set_DesPadrao(Tabela t){
+		set_SomfiYi2(t);
+		set_SomfiYi(t);
 		float Temp = (som_fiYi2 / t.n) - ((som_fiYi * som_fiYi) / t.n);
 		return DesPadrao = t.h * Mathf.Sqrt(Temp);
 	}
@@ -88,73 +84,73 @@ public class Formulas : MonoBehaviour {
 			som_XiYi += X.ElementosN[i] * Y.ElementosN[i];
 		}
 	}
-	void set_somXi2(Elementos X){
+	void set_somXi2(Elementos X, Tabela t){
 		som_Xi2 = 0;
 		t.set_Xi2(X);
 		for(int i = 0; i < X.ElementosN.Length; ++i){
-			som_Xi2 += t.Xi2.ElementosN[i];
+			som_Xi2 += t.Xi2().ElementosN[i];
 		}
 	}
-	void set_somYi2(Elementos Y){
+	void set_somYi2(Elementos Y, Tabela t){
 		som_Yi2 = 0;
 		t.set_Yi2(Y);
 		for(int i = 0; i < Y.ElementosN.Length; ++i){
-			som_Yi2 += t.Yi2.ElementosN[i];
+			som_Yi2 += t.Yi2().ElementosN[i];
 		}
 	}
-	void set_somXiYig(Elementos X){
+	void set_somXiYig(Elementos X, Tabela t){
 		som_XiYig = 0;
 		for(int i = 0; i < X.ElementosN.Length; ++i){
-			som_XiYig += X.ElementosN[i] * t.Yi_Ajustado.ElementosN[i];
+			som_XiYig += X.ElementosN[i] * t.Yi_Ajustado().ElementosN[i];
 		}
 	}
-	void set_somYig2(Elementos Y){
+	void set_somYig2(Elementos Y, Tabela t){
 		som_Yig2 = 0;
 		t.set_YiAjustado(Y);
 		for(int i = 0; i < Y.ElementosN.Length; ++i){
-			som_Yig2 += Mathf.Pow(t.Yi_Ajustado.ElementosN[i],2);
+			som_Yig2 += Mathf.Pow(t.Yi_Ajustado().ElementosN[i],2);
 		}
 	}
-	void set_somYig(Elementos Y){
+	void set_somYig(Elementos Y, Tabela t){
 		som_Yig = 0;
 		t.set_YiAjustado(Y);
 		for(int i = 0; i < Y.ElementosN.Length; ++i){
-			som_Yig += t.Yi_Ajustado.ElementosN[i];
+			som_Yig += t.Yi_Ajustado().ElementosN[i];
 		}
 	}
 	//-------------------------------------------------------
 	//Coef. Person e Equaçoes lineares e nao lineares
-	public float Coeficiente_Person_Linear(Elementos X, Elementos Y){
+	public float Coeficiente_Person_Linear(Elementos X, Elementos Y, Tabela t){
 		set_somXi(X);
 		set_somXiYi(X,Y);
 		set_somYi(Y);
-		set_somXi2(X);
-		set_somYi2(Y);
+		set_somXi2(X,t);
+		set_somYi2(Y,t);
 		return ((t.n * som_XiYi) - (som_Xi * som_Yi)) / Mathf.Sqrt(((t.n * som_Xi2) - Mathf.Pow(som_Xi, 2)) * ((t.n * som_Yi2) - Mathf.Pow(som_Yi, 2)));
 	}
-	public float Coeficiente_Person_nLinear(Elementos X, Elementos Y){
+	public float Coeficiente_Person_nLinear(Elementos X, Elementos Y, Tabela t){
 		set_somXi(X);
-		set_somXiYig(X);
-		set_somYig(Y);
-		set_somXi2(X);
-		set_somYig2(Y);
+		set_somXiYig(X,t);
+		set_somYig(Y,t);
+		set_somXi2(X,t);
+		set_somYig2(Y,t);
 		return ((t.n * som_XiYig) - (som_Xi * som_Yig)) / Mathf.Sqrt(((t.n * som_Xi2) - Mathf.Pow(som_Xi, 2)) * ((t.n * som_Yig2) - Mathf.Pow(som_Yig, 2)));
 	}
-	public void Sist_Linear(Elementos X, Elementos Y){
+	public void Sist_Linear(Elementos X, Elementos Y, Tabela t){
 		set_somXi(X);
 		set_somXiYi(X,Y);
 		set_somYi(Y);
-		set_somXi2(X);
-		set_somYi2(Y);
+		set_somXi2(X,t);
+		set_somYi2(Y,t);
 		b = (som_XiYi - som_Xi * (som_Yi / t.n)) / (som_Xi2 - (som_Xi2 / t.n));
 		a = (som_Yi - som_Xi * b) / t.n;
 	}
-	public void Sist_nLinear(Elementos X, Elementos Y){
+	public void Sist_nLinear(Elementos X, Elementos Y, Tabela t){
 		set_somXi(X);
-		set_somXiYig(X);
-		set_somYig(Y);
-		set_somXi2(X);
-		set_somYig2(Y);
+		set_somXiYig(X,t);
+		set_somYig(Y,t);
+		set_somXi2(X,t);
+		set_somYig2(Y,t);
 		b = (som_XiYig - som_Xi * (som_Yig / t.n)) / (som_Xi2 - (som_Xi2 / t.n));
 		a = (som_Yig - som_Xi * b) / t.n;
 		alf = Mathf.Exp(a);
